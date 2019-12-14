@@ -1,14 +1,44 @@
 package me.falsehonesty.utils
 
+import kotlin.math.abs
+
 typealias Coord = Pair<Int, Int>
 
-data class XY(val x: Int, val y: Int) {
-    fun off(x: Int = 0, y: Int = 0): XY {
-        return XY(this.x + x, this.y + y)
+class XY(private var x: Int, private var y: Int) {
+    fun off(x: Int = 0, y: Int = 0) = apply {
+        this.x += x
+        this.y += y
     }
 
-    fun off(dir: Direction): XY {
-        return off(dir.dx, dir.dy)
+    fun off(dir: Direction) = apply {
+        off(dir.dx, dir.dy)
+    }
+
+    fun dist(coord: Coord) = dist(coord.first, coord.second)
+
+    fun dist(xy: XY) = dist(xy.x, xy.y)
+
+    fun dist(x: Int = 0, y: Int = 0): Int {
+        return abs(this.x - x) + abs(this.y - y)
+    }
+
+    fun toCoord() = x to y
+
+    fun component1() = x
+    fun component2() = y
+
+    override fun equals(other: Any?): Boolean {
+        return other is XY && other.x == x && other.y == y
+    }
+
+    override fun toString(): String {
+        return "($x, $y)"
+    }
+
+    override fun hashCode(): Int {
+        var result = x
+        result = 31 * result + y
+        return result
     }
 }
 

@@ -1,5 +1,7 @@
 package me.falsehonesty.utils
 
+import java.lang.IllegalArgumentException
+
 class Grid<T>(private val size: Int) {
     private var cursor = Coord(0, 0)
     private var content = listOf2D<Node<T>>(size, Node())
@@ -62,6 +64,33 @@ enum class Direction(val dx: Int, val dy: Int) {
             Direction.values().first()
         } else {
             Direction.values()[this.ordinal + 1]
+        }
+    }
+
+    companion object {
+        fun fromLetter(letter: Char): Direction {
+            return when(letter) {
+                'L' -> LEFT
+                'R' -> RIGHT
+                'U' -> UP
+                'D' -> DOWN
+                else -> throw IllegalArgumentException("Not a valid Direction letter")
+            }
+        }
+    }
+}
+
+data class DirectionAndMagnitude(val dir: Direction, val magnitude: Int) {
+    companion object {
+        /**
+         * Parses formats like:
+         * L99
+         * U3
+         */
+        fun from(descriptor: String): DirectionAndMagnitude {
+            val dir = Direction.fromLetter(descriptor[0])
+            val magnitude = descriptor.substring(1).toInt()
+            return DirectionAndMagnitude(dir, magnitude)
         }
     }
 }

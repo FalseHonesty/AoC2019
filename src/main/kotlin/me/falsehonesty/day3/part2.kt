@@ -10,14 +10,16 @@ fun main() {
 
     val (wire1, wire2) = moves.map { it.split(",").map { desc -> DirectionAndMagnitude.from(desc) } }
 
-    val walked = mutableSetOf<Coord>()
+    val walked = mutableMapOf<Coord, Int>()
     var pos = XY(0, 0)
+    var steps = 0
     for (move in wire1) {
         val (dir, mag) = move
 
         repeat(mag) {
+            steps++
             pos.off(dir)
-            walked.add(pos.toCoord())
+            walked[pos.toCoord()] = steps
         }
     }
 
@@ -25,17 +27,19 @@ fun main() {
 
     var closestCross = Int.MAX_VALUE
     pos = XY(0, 0)
+    steps = 0
     for (move in wire2) {
         val (dir, mag) = move
 
         repeat(mag) {
+            steps++
             pos.off(dir)
 
-            val asCoord = pos.toCoord()
-            if (walked.contains(asCoord)) {
-                val dist = pos.dist()
-                if (dist < closestCross) {
-                    closestCross = dist
+            val cross = walked[pos.toCoord()]
+            if (cross != null) {
+                val totalSteps = steps + cross
+                if (totalSteps < closestCross) {
+                    closestCross = totalSteps
                 }
             }
         }
